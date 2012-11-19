@@ -4,14 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.achartengine.ChartFactory;
+import org.achartengine.chart.BarChart.Type;
 import org.achartengine.chart.PointStyle;
 import org.achartengine.model.XYMultipleSeriesDataset;
 import org.achartengine.model.XYSeries;
+import org.achartengine.renderer.SimpleSeriesRenderer;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 
 import android.app.Activity;
 import android.graphics.Color;
+import android.graphics.Paint.Align;
 import android.os.Bundle;
 import android.view.View;
 
@@ -38,10 +41,12 @@ public class History extends Activity {
 				PointStyle.DIAMOND };
 		XYMultipleSeriesRenderer renderer = buildRenderer(colors, styles, true);
 
-		setChartSettings(renderer, "Line Chart Demo", "X", "Y", -1, 12, 0, 35,
-				Color.WHITE, Color.WHITE);
+		setChartSettings(renderer, "Pomodoros History", "X", "Y", -1, 12, 0,
+				35, Color.WHITE, Color.WHITE);
 
-		View chart = ChartFactory.getLineChartView(this, dataset, renderer);
+		// View chart = ChartFactory.getLineChartView(this, dataset, renderer);
+		View chart = ChartFactory.getBarChartView(this, dataset, renderer,
+				Type.DEFAULT);
 		setContentView(chart);
 	}
 
@@ -94,5 +99,36 @@ public class History extends Activity {
 		renderer.setYAxisMax(yMax);
 		renderer.setAxesColor(axesColor);
 		renderer.setLabelsColor(labelsColor);
+		// font size of "X, Y"
+		renderer.setAxisTitleTextSize(16);
+		renderer.setChartTitleTextSize(16);
+		renderer.setLabelsTextSize(16);
+		// 设置页边空白的颜色
+		renderer.setMarginsColor(Color.GRAY);
+		// 设置是否显示,坐标轴的轴,默认为 true
+		renderer.setShowAxes(true);
+		// 设置x,y轴显示的排列
+		renderer.setXLabelsAlign(Align.CENTER);
+		renderer.setYLabelsAlign(Align.RIGHT);
+		// 设置坐标轴,轴的颜色
+		renderer.setAxesColor(Color.RED);
+		// 显示网格
+		renderer.setShowGrid(true);
+		// 设置x,y轴上的刻度的颜色
+		renderer.setLabelsColor(Color.BLACK);
+		// 设置是否显示,坐标轴的轴,默认为 true
+		renderer.setShowAxes(true);
+		// 设置条形图之间的距离
+		renderer.setBarSpacing(0.5);
+		int length = renderer.getSeriesRendererCount();
+
+		for (int i = 0; i < length; i++) {
+			SimpleSeriesRenderer ssr = renderer.getSeriesRendererAt(i);
+			// 不知道作者的居中是怎么计算的,默认是Align.CENTER,但是对于两个以上的条形显示
+			// 就画在了最右边
+			ssr.setChartValuesTextAlign(Align.RIGHT);
+			ssr.setChartValuesTextSize(16);
+			ssr.setDisplayChartValues(true);
+		}
 	}
 }
