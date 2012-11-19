@@ -1,108 +1,112 @@
 package com.example.tompomodoros;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.chart.BarChart.Type;
-import org.achartengine.chart.PointStyle;
+import org.achartengine.model.CategorySeries;
 import org.achartengine.model.XYMultipleSeriesDataset;
-import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.SimpleSeriesRenderer;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint.Align;
 import android.os.Bundle;
 import android.view.View;
 
 public class History extends Activity {
+	private static Map map = new TreeMap<String, Object>();
+
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		String[] titles = new String[] { "First", "Second" };
-
-		List x = new ArrayList();
-		List y = new ArrayList();
-
-		x.add(new double[] { 1, 3, 5, 7, 9, 11 });
-		x.add(new double[] { 0, 2, 4, 6, 8, 10 });
-
-		y.add(new double[] { 3, 14, 5, 30, 20, 25 });
-		y.add(new double[] { 18, 9, 21, 15, 10, 6 });
-
-		XYMultipleSeriesDataset dataset = buildDataset(titles, x, y);
-
-		int[] colors = new int[] { Color.BLUE, Color.GREEN };
-		PointStyle[] styles = new PointStyle[] { PointStyle.CIRCLE,
-				PointStyle.DIAMOND };
-		XYMultipleSeriesRenderer renderer = buildRenderer(colors, styles, true);
-
-		setChartSettings(renderer, "Pomodoros History", "X", "Y", -1, 12, 0,
-				35, Color.WHITE, Color.WHITE);
-
-		// View chart = ChartFactory.getLineChartView(this, dataset, renderer);
-		View chart = ChartFactory.getBarChartView(this, dataset, renderer,
-				Type.DEFAULT);
+		
+		XYMultipleSeriesRenderer renderer = getBarDemoRenderer();
+		setChartSettings(renderer);
+		XYMultipleSeriesDataset getBarDataset2 = getBarDataset(this); // then map was filled, by Tom Xue
+		
+		int count = 1;
+		// 这里比较重要，这里手动给X轴填刻度。有多少条内容，你就要添多少个刻度，这样X轴就显示的是时间，也能显示出长方形图
+		for (Object key2 : map.keySet()) {
+			renderer.addXTextLabel(count, key2.toString());
+			count++;
+		}
+		
+		View chart = ChartFactory.getBarChartView(this, getBarDataset2, renderer, Type.DEFAULT);
 		setContentView(chart);
-	}
-
-	protected XYMultipleSeriesDataset buildDataset(String[] titles,
-			List xValues, List yValues) {
-		XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
-
-		int length = titles.length; // 有几条线
-		for (int i = 0; i < length; i++) {
-			XYSeries series = new XYSeries(titles[i]); // 根据每条线的名称创建
-			double[] xV = (double[]) xValues.get(i); // 获取第i条线的数据
-			double[] yV = (double[]) yValues.get(i);
-			int seriesLength = xV.length; // 有几个点
-
-			for (int k = 0; k < seriesLength; k++) // 每条线里有几个点
-			{
-				series.add(xV[k], yV[k]);
-			}
-
-			dataset.addSeries(series);
 		}
 
+	private static XYMultipleSeriesDataset getBarDataset(Context cxt) {
+		XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
+		CategorySeries series = new CategorySeries("最近31天");
+		Calendar c = Calendar.getInstance();
+		int month = c.get(Calendar.MONTH) + 1;
+		int day = c.get(Calendar.DAY_OF_MONTH);
+		String key = (month < 10 ? ("0" + month) : month) + "-"
+				+ (day < 10 ? ("0" + day) : day);
+		
+		map.put(key, 0.0);
+		for (int i = 0; i <= 29; i++) {	// 31 days
+			c.add(Calendar.DAY_OF_YEAR, -1);	// ?
+			day = c.get(Calendar.DAY_OF_MONTH);
+			month = c.get(Calendar.MONTH) + 1;
+			map.put(key, 0.0);
+		}		
+
+		// 这里的list是我取出一个对象列表，自己可以找别的数据代替
+		List<int[]> list = new ArrayList<int[]>();
+		list.add(new int[] { 18, 9, 21, 15, 10, 6 });
+		if (list != null && list.size() > 0) {
+			for (int i = 0; i < list.size(); i++) {
+				if (map.containsKey(key)) {
+					map.put(key, list.get(i));
+				}
+			}
+		}
+		
+		for (Object key1 : map.keySet()) {
+			series.add((String)key1, 3);
+		}
+		dataset.addSeries(series.toXYSeries());
 		return dataset;
 	}
 
-	protected XYMultipleSeriesRenderer buildRenderer(int[] colors,
-			PointStyle[] styles, boolean fill) {
+	private static XYMultipleSeriesRenderer getBarDemoRenderer() {
 		XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer();
-		int length = colors.length;
-		for (int i = 0; i < length; i++) {
-			XYSeriesRenderer r = new XYSeriesRenderer();
-			r.setColor(colors[i]);
-			r.setPointStyle(styles[i]);
-			r.setFillPoints(fill);
-			renderer.addSeriesRenderer(r);
-		}
-		return renderer;
-	}
-
-	protected void setChartSettings(XYMultipleSeriesRenderer renderer,
-			String title, String xTitle, String yTitle, double xMin,
-			double xMax, double yMin, double yMax, int axesColor,
-			int labelsColor) {
-		renderer.setChartTitle(title);
-		renderer.setXTitle(xTitle);
-		renderer.setYTitle(yTitle);
-		renderer.setXAxisMin(xMin);
-		renderer.setXAxisMax(xMax);
-		renderer.setYAxisMin(yMin);
-		renderer.setYAxisMax(yMax);
-		renderer.setAxesColor(axesColor);
-		renderer.setLabelsColor(labelsColor);
-		// font size of "X, Y"
 		renderer.setAxisTitleTextSize(16);
 		renderer.setChartTitleTextSize(16);
 		renderer.setLabelsTextSize(16);
+		renderer.setLegendTextSize(16);
+		renderer.setMargins(new int[] { 20, 30, 15, 0 });
+		XYSeriesRenderer r = new XYSeriesRenderer();
+		r.setColor(Color.RED);
+		renderer.addSeriesRenderer(r);
+		return renderer;
+	}
+
+	private static void setChartSettings(XYMultipleSeriesRenderer renderer) {
+		renderer.setChartTitle("最近31天");
+		renderer.setXTitle("时间-天");
+		renderer.setYTitle("番茄数");
+		renderer.setYAxisMin(0);
+		renderer.setYAxisMax(30);
+		renderer.setXAxisMin(0.5);
+		renderer.setXAxisMax(12.5);
+		renderer.setShowLegend(false);
+		renderer.setShowLabels(true);
+		renderer.setShowGrid(true);
+		renderer.setXLabels(1);
+		renderer.setDisplayChartValues(true);
+		renderer.setBarSpacing(0.5);
+		renderer.setBackgroundColor(Color.WHITE);
 		// 设置页边空白的颜色
 		renderer.setMarginsColor(Color.GRAY);
 		// 设置是否显示,坐标轴的轴,默认为 true
@@ -123,12 +127,13 @@ public class History extends Activity {
 		int length = renderer.getSeriesRendererCount();
 
 		for (int i = 0; i < length; i++) {
-			SimpleSeriesRenderer ssr = renderer.getSeriesRendererAt(i);
-			// 不知道作者的居中是怎么计算的,默认是Align.CENTER,但是对于两个以上的条形显示
-			// 就画在了最右边
-			ssr.setChartValuesTextAlign(Align.RIGHT);
-			ssr.setChartValuesTextSize(16);
-			ssr.setDisplayChartValues(true);
+		SimpleSeriesRenderer ssr = renderer.getSeriesRendererAt(i);
+		// 不知道作者的居中是怎么计算的,默认是Align.CENTER,但是对于两个以上的条形显示
+		// 就画在了最右边
+		ssr.setChartValuesTextAlign(Align.RIGHT);
+		ssr.setChartValuesTextSize(16);
+		ssr.setDisplayChartValues(true);
 		}
 	}
+
 }
