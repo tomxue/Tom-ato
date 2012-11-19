@@ -94,7 +94,7 @@ public void onCreate(Bundle savedInstanceState) {
 
 	private static void setChartSettings(XYMultipleSeriesRenderer renderer) {
 		renderer.setChartTitle("最近31天");
-		renderer.setXTitle("时间-天");
+		renderer.setXTitle("日期");
 		renderer.setYTitle("番茄数");
 		renderer.setYAxisMin(0);
 		renderer.setYAxisMax(30);
