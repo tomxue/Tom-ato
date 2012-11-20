@@ -15,6 +15,7 @@ import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -27,11 +28,6 @@ public class History extends Activity {
 	private static int mydata_user;
 	private static String mydate_key;
 
-	private class PomodorosData {
-		String mydate;
-		int mydata;
-	}
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -39,19 +35,20 @@ public class History extends Activity {
 		Bundle bundle = this.getIntent().getExtras();
 		mydata_user = bundle.getInt("mydata");
 		mydate_key = bundle.getString("mydate");
-
+		
 		// 打开或创建tompomodoros.db数据库
 		SQLiteDatabase db = openOrCreateDatabase("tompomodoros.db",
 				Context.MODE_PRIVATE, null);
-		db.execSQL("DROP TABLE IF EXISTS mytable");
+		db.execSQL("DROP TABLE IF EXISTS mytable");	// 清除表格? to be fixed...
 		// 创建mytable表
 		db.execSQL("CREATE TABLE mytable (_id INTEGER PRIMARY KEY AUTOINCREMENT, mydate VARCHAR, mydata SMALLINT)");
-		PomodorosData pomodorosdata = new PomodorosData();
-		pomodorosdata.mydate = mydate_key;
-		pomodorosdata.mydata = mydata_user;
-		// 插入数据
-		db.execSQL("INSERT INTO mytable VALUES (NULL, ?, ?)", new Object[] {
-				pomodorosdata.mydate, pomodorosdata.mydata });
+				
+		//ContentValues以键值对的形式存放数据  
+        ContentValues cv = new ContentValues();  
+        cv.put("mydate", mydate_key);  
+        cv.put("mydata", mydata_user);  
+        //插入ContentValues中的数据  
+        db.insert("mytable", null, cv);  
 		db.close();
 
 		XYMultipleSeriesRenderer renderer = getBarDemoRenderer();
@@ -61,7 +58,7 @@ public class History extends Activity {
 
 		int count = 1;
 		// 这里比较重要，这里手动给X轴填刻度。有多少条内容，你就要添多少个刻度，这样X轴就显示的是时间，也能显示出长方形图
-		// (2) then map is further rendered by Tom Xue
+		// (2) then map is further rendered, by Tom Xue
 		for (Object key_tmp : map.keySet()) {
 			renderer.addXTextLabel(count, key_tmp.toString());
 			count++;
