@@ -19,6 +19,8 @@ public class TomPomodoros extends Activity {
 
 	private int iCount = 0;
 	private int TotalLength = 1500; // 60*25=1500
+	
+	private int tomatoCount = 0;
 
 	Timer timer_tmp;
 
@@ -69,6 +71,8 @@ public class TomPomodoros extends Activity {
 		public void run() {
 			iCount += 1;
 			progressbar.setProgress(iCount);
+			if (iCount == TotalLength)
+				tomatoCount = tomatoCount + 1;
 		}
 	}
 
