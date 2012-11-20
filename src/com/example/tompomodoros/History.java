@@ -17,40 +17,70 @@ import org.achartengine.renderer.XYSeriesRenderer;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Paint.Align;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 public class History extends Activity {
 	private static Map map = new TreeMap<String, Object>();
 	private static int mydata_user;
-	private static String mydate_key;
-
+	private static String mydate_key;	
+	private static final String TAG = "tomxue";
+	private static SQLiteDatabase db;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		Bundle bundle = this.getIntent().getExtras();
 		mydata_user = bundle.getInt("mydata");
-		mydate_key = bundle.getString("mydate");
-		
-		// 打开或创建tompomodoros.db数据库
-		SQLiteDatabase db = openOrCreateDatabase("tompomodoros.db",
-				Context.MODE_PRIVATE, null);
-		db.execSQL("DROP TABLE IF EXISTS mytable");	// 清除表格? to be fixed...
-		// 创建mytable表
-		db.execSQL("CREATE TABLE mytable (_id INTEGER PRIMARY KEY AUTOINCREMENT, mydate VARCHAR, mydata SMALLINT)");
-				
-		//ContentValues以键值对的形式存放数据  
-        ContentValues cv = new ContentValues();  
-        cv.put("mydate", mydate_key);  
-        cv.put("mydata", mydata_user);  
-        //插入ContentValues中的数据  
-        db.insert("mytable", null, cv);  
-		db.close();
-
+		mydate_key = bundle.getString("mydate");				
+        
+        // 打开或创建tompomodoros.db数据库
+     	db = openOrCreateDatabase("tompomodoros24.db", Context.MODE_PRIVATE, null);
+//     	db.execSQL("DROP TABLE IF EXISTS mytable");	// 清除表格? to be fixed...
+     	// 创建mytable表
+//     	db.execSQL("CREATE TABLE mytable (_id INTEGER PRIMARY KEY AUTOINCREMENT, mydate VARCHAR, mydata SMALLINT)");
+     	db.execSQL("CREATE TABLE if not exists mytable (_id INTEGER PRIMARY KEY AUTOINCREMENT, mydate VARCHAR, mydata SMALLINT)");
+     	//ContentValues以键值对的形式存放数据, make the table not empty, by Tom Xue
+        ContentValues cv;
+        
+        int mydata_dbitem = 0;
+        boolean dbitem_exist = false;
+        Cursor c = db.rawQuery("SELECT _id, mydate, mydata FROM mytable", new String[]{});  
+        while (c.moveToNext()) {
+        	String mydate_item = c.getString(c.getColumnIndex("mydate"));              
+            if(mydate_item.equals(mydate_key)){
+            	mydata_dbitem = c.getInt(c.getColumnIndex("mydata")); 
+            	//删除数据  
+                db.delete("mytable", "mydate = ?", new String[]{mydate_key});  
+                cv = new ContentValues();
+                cv.put("mydate", mydate_key);
+                cv.put("mydata", 1+mydata_dbitem);
+                System.out.println("c.getCount()=");
+                System.out.println(c.getCount());
+                //插入ContentValues中的数据  
+                db.insert("mytable", null, cv);
+                dbitem_exist = true;
+       	    }
+        }
+        c.close();  
+        
+        if (dbitem_exist == false){
+	        //ContentValues以键值对的形式存放数据
+	        cv = new ContentValues();
+	        cv.put("mydate", mydate_key); 
+	        cv.put("mydata", mydata_user);
+	        System.out.println("mydata_user=");
+	        System.out.println(mydata_user);
+	        //插入ContentValues中的数据  
+	        db.insert("mytable", null, cv);    
+        }
+        
 		XYMultipleSeriesRenderer renderer = getBarDemoRenderer();
 		setChartSettings(renderer);
 		// (1) during it map was filled, by Tom Xue
@@ -61,12 +91,16 @@ public class History extends Activity {
 		// (2) then map is further rendered, by Tom Xue
 		for (Object key_tmp : map.keySet()) {
 			renderer.addXTextLabel(count, key_tmp.toString());
-			count++;
+			count++;  
 		}
 
 		View chart = ChartFactory.getBarChartView(this, getBarDataset2,
 				renderer, Type.DEFAULT);
 		setContentView(chart);
+		
+		db.close();
+		// delete db, comment it out in final code
+		deleteDatabase("tompomodoros17.db");  
 	}
 
 	private static XYMultipleSeriesDataset getBarDataset(Context cxt) {
@@ -86,10 +120,22 @@ public class History extends Activity {
 		// }
 		// }
 
-		for (Object key1 : map.keySet()) {
-			// series.add((String) key1, mydata_user);
-			series.add(mydate_key, mydata_user);
-		}
+//		for (Object key1 : map.keySet()) {
+//			// series.add((String) key1, mydata_user);
+//			series.add(mydate_key, mydata_user);
+//		}
+		
+		Cursor c = db.rawQuery("SELECT _id, mydate, mydata FROM mytable", new String[]{});  
+        while (c.moveToNext()) {  
+            int _id = c.getInt(c.getColumnIndex("_id"));  
+            String mydate = c.getString(c.getColumnIndex("mydate"));  
+            int mydata = c.getInt(c.getColumnIndex("mydata"));  
+            map.put(mydate, mydata);
+            series.add(mydate, mydata);
+            Log.v(TAG, "while loop times");
+        }  
+        c.close();  		
+		
 		dataset.addSeries(series.toXYSeries());
 		return dataset;
 	}

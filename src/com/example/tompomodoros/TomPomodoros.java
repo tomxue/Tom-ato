@@ -5,7 +5,9 @@ import java.util.Timer;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -22,14 +24,14 @@ public class TomPomodoros extends Activity {
 	private int TotalLength = 4; // 60*25=1500
 	private int tomatoCount = 0;
 	private static String mydate_key = "0-0";
-
+	
 	Timer timer_tmp;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
-
+		setContentView(R.layout.activity_main);		
+		
 		button_start = (Button) findViewById(R.id.button1);
 		button_cancel = (Button) findViewById(R.id.button2);
 		button_history = (Button) findViewById(R.id.button3);
@@ -86,7 +88,7 @@ public class TomPomodoros extends Activity {
 			iCount += 1;
 			progressbar.setProgress(iCount);
 			if (iCount == TotalLength) {
-				tomatoCount = tomatoCount + 1;
+				tomatoCount = 1;
 				timer_tmp.cancel();
 				progressbar.setProgress(0);
 				iCount = 0;
