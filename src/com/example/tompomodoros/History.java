@@ -24,7 +24,9 @@ import android.view.View;
 
 public class History extends Activity {
 	private static Map map = new TreeMap<String, Object>();
-	private static int mydate_main;
+	private static int mydata_user;
+	private static String mydate_key;
+
 	private class PomodorosData {
 		String mydate;
 		int mydata;
@@ -34,22 +36,29 @@ public class History extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		Calendar c = Calendar.getInstance();
+		int year = c.get(Calendar.YEAR);
+		int month = c.get(Calendar.MONTH) + 1;
+		int day = c.get(Calendar.DAY_OF_MONTH);
+		mydate_key = year + "-" + (month < 10 ? ("0" + month) : month) + "-"
+				+ (day < 10 ? ("0" + day) : day);
+
+		Bundle bunde = this.getIntent().getExtras();
+		mydata_user = bunde.getInt("mydate");
+
 		// 打开或创建tompomodoros.db数据库
 		SQLiteDatabase db = openOrCreateDatabase("tompomodoros.db",
 				Context.MODE_PRIVATE, null);
-		 db.execSQL("DROP TABLE IF EXISTS mytable");
+		db.execSQL("DROP TABLE IF EXISTS mytable");
 		// 创建mytable表
 		db.execSQL("CREATE TABLE mytable (_id INTEGER PRIMARY KEY AUTOINCREMENT, mydate VARCHAR, mydata SMALLINT)");
 		PomodorosData pomodorosdata = new PomodorosData();
-		pomodorosdata.mydate = "11-29";
-		pomodorosdata.mydata = 16;
+		pomodorosdata.mydate = mydate_key;
+		pomodorosdata.mydata = mydata_user;
 		// 插入数据
 		db.execSQL("INSERT INTO mytable VALUES (NULL, ?, ?)", new Object[] {
 				pomodorosdata.mydate, pomodorosdata.mydata });
 		db.close();
-		
-		Bundle bunde = this.getIntent().getExtras();
-		mydate_main = bunde.getInt("mydate");
 
 		XYMultipleSeriesRenderer renderer = getBarDemoRenderer();
 		setChartSettings(renderer);
@@ -72,34 +81,22 @@ public class History extends Activity {
 	private static XYMultipleSeriesDataset getBarDataset(Context cxt) {
 		XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
 		CategorySeries series = new CategorySeries("最近31天");
-		Calendar c = Calendar.getInstance();
-		int year = c.get(Calendar.YEAR);
-		int month = c.get(Calendar.MONTH) + 1;
-		int day = c.get(Calendar.DAY_OF_MONTH);
-		String key = year + "-" + (month < 10 ? ("0" + month) : month) + "-"
-				+ (day < 10 ? ("0" + day) : day);
 
-		map.put(key, 0.0);
-		// for (int i = 0; i <= 29; i++) { // 31 days
-		// c.add(Calendar.DAY_OF_YEAR, -1); // ?
-		// day = c.get(Calendar.DAY_OF_MONTH);
-		// month = c.get(Calendar.MONTH) + 1;
-		// map.put(key, 0.0);
-		// }
+		map.put(mydate_key, 0.0);
 
 		// 这里的list是我取出一个对象列表，自己可以找别的数据代替
 		List<int[]> list = new ArrayList<int[]>();
 		list.add(new int[] { 18, 9, 21, 15, 10, 6 }); // data to be shown
 		if (list != null && list.size() > 0) {
 			for (int i = 0; i < list.size(); i++) {
-				if (map.containsKey(key)) {
-					map.put(key, list.get(i)); // but the key is unique
+				if (map.containsKey(mydate_key)) {
+					map.put(mydate_key, list.get(i)); // but the key is unique
 				}
 			}
 		}
 
 		for (Object key1 : map.keySet()) {
-			series.add((String) key1, mydate_main);
+			series.add((String) key1, mydata_user);
 		}
 		dataset.addSeries(series.toXYSeries());
 		return dataset;
