@@ -18,8 +18,8 @@ public class TomPomodoros extends Activity {
 	protected static final int NEXT = 0x10001;
 
 	private int iCount = 0;
-	private int TotalLength = 15; // 60*25=1500
-	
+	private int TotalLength = 4; // 60*25=1500
+
 	private int tomatoCount = 0;
 
 	Timer timer_tmp;
@@ -55,17 +55,17 @@ public class TomPomodoros extends Activity {
 				timer_tmp.cancel();
 			}
 		});
-		
+
 		button_history.setOnClickListener(new Button.OnClickListener() {
 			public void onClick(View v) {
 				// Switch to report page
 				Intent intent = new Intent();
 				intent.setClass(TomPomodoros.this, History.class);
-				
+
 				Bundle bundle = new Bundle();
 				bundle.putInt("mydate", tomatoCount);
 				intent.putExtras(bundle);
-				
+
 				startActivity(intent);
 			}
 		});
@@ -76,8 +76,12 @@ public class TomPomodoros extends Activity {
 		public void run() {
 			iCount += 1;
 			progressbar.setProgress(iCount);
-			if (iCount == TotalLength)
+			if (iCount == TotalLength) {
 				tomatoCount = tomatoCount + 1;
+				timer_tmp.cancel();
+				progressbar.setProgress(0);
+				iCount = 0;
+			}
 		}
 	}
 
