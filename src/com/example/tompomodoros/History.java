@@ -36,15 +36,9 @@ public class History extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		Calendar c = Calendar.getInstance();
-		int year = c.get(Calendar.YEAR);
-		int month = c.get(Calendar.MONTH) + 1;
-		int day = c.get(Calendar.DAY_OF_MONTH);
-		mydate_key = year + "-" + (month < 10 ? ("0" + month) : month) + "-"
-				+ (day < 10 ? ("0" + day) : day);
-
-		Bundle bunde = this.getIntent().getExtras();
-		mydata_user = bunde.getInt("mydate");
+		Bundle bundle = this.getIntent().getExtras();
+		mydata_user = bundle.getInt("mydata");
+		mydate_key = bundle.getString("mydate");
 
 		// 打开或创建tompomodoros.db数据库
 		SQLiteDatabase db = openOrCreateDatabase("tompomodoros.db",
@@ -68,8 +62,8 @@ public class History extends Activity {
 		int count = 1;
 		// 这里比较重要，这里手动给X轴填刻度。有多少条内容，你就要添多少个刻度，这样X轴就显示的是时间，也能显示出长方形图
 		// (2) then map is further rendered by Tom Xue
-		for (Object key2 : map.keySet()) {
-			renderer.addXTextLabel(count, key2.toString());
+		for (Object key_tmp : map.keySet()) {
+			renderer.addXTextLabel(count, key_tmp.toString());
 			count++;
 		}
 
@@ -82,21 +76,22 @@ public class History extends Activity {
 		XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
 		CategorySeries series = new CategorySeries("最近31天");
 
-		map.put(mydate_key, 0.0);
+		map.put(mydate_key, 0.0);	// initialize to zero
 
 		// 这里的list是我取出一个对象列表，自己可以找别的数据代替
-		List<int[]> list = new ArrayList<int[]>();
-		list.add(new int[] { 18, 9, 21, 15, 10, 6 }); // data to be shown
-		if (list != null && list.size() > 0) {
-			for (int i = 0; i < list.size(); i++) {
-				if (map.containsKey(mydate_key)) {
-					map.put(mydate_key, list.get(i)); // but the key is unique
-				}
-			}
-		}
+		// List<int[]> list = new ArrayList<int[]>();
+		// list.add(new int[] { 18, 9, 21, 15, 10, 6 }); // data to be shown
+		// if (list != null && list.size() > 0) {
+		// for (int i = 0; i < list.size(); i++) {
+		// if (map.containsKey(mydate_key)) {
+		// map.put(mydate_key, mydata_user); // but the key is unique
+		// }
+		// }
+		// }
 
 		for (Object key1 : map.keySet()) {
-			series.add((String) key1, mydata_user);
+			// series.add((String) key1, mydata_user);
+			series.add(mydate_key, mydata_user);
 		}
 		dataset.addSeries(series.toXYSeries());
 		return dataset;

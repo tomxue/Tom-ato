@@ -1,5 +1,6 @@
 package com.example.tompomodoros;
 
+import java.util.Calendar;
 import java.util.Timer;
 
 import android.os.Bundle;
@@ -19,8 +20,8 @@ public class TomPomodoros extends Activity {
 
 	private int iCount = 0;
 	private int TotalLength = 4; // 60*25=1500
-
 	private int tomatoCount = 0;
+	private static String mydate_key = "0-0";
 
 	Timer timer_tmp;
 
@@ -45,6 +46,13 @@ public class TomPomodoros extends Activity {
 				Timer timer = new Timer();
 				timer.schedule(new ProgressbarTask(), 0, 1000);
 				timer_tmp = timer;
+
+				Calendar c = Calendar.getInstance();
+				int year = c.get(Calendar.YEAR);
+				int month = c.get(Calendar.MONTH) + 1;
+				int day = c.get(Calendar.DAY_OF_MONTH);
+				mydate_key = year + "-" + (month < 10 ? ("0" + month) : month)
+						+ "-" + (day < 10 ? ("0" + day) : day);
 			}
 		});
 
@@ -63,7 +71,8 @@ public class TomPomodoros extends Activity {
 				intent.setClass(TomPomodoros.this, History.class);
 
 				Bundle bundle = new Bundle();
-				bundle.putInt("mydate", tomatoCount);
+				bundle.putInt("mydata", tomatoCount);
+				bundle.putString("mydate", mydate_key);
 				intent.putExtras(bundle);
 
 				startActivity(intent);
