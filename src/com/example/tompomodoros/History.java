@@ -24,9 +24,9 @@ import android.view.View;
 
 public class History extends Activity {
 	private static Map map = new TreeMap<String, Object>();
-
+	private static int mydate_main;
 	private class PomodorosData {
-		String date;
+		String mydate;
 		int mydata;
 	}
 
@@ -39,14 +39,17 @@ public class History extends Activity {
 				Context.MODE_PRIVATE, null);
 		 db.execSQL("DROP TABLE IF EXISTS mytable");
 		// 创建mytable表
-		db.execSQL("CREATE TABLE mytable (_id INTEGER PRIMARY KEY AUTOINCREMENT, date VARCHAR, mydata SMALLINT)");
+		db.execSQL("CREATE TABLE mytable (_id INTEGER PRIMARY KEY AUTOINCREMENT, mydate VARCHAR, mydata SMALLINT)");
 		PomodorosData pomodorosdata = new PomodorosData();
-		pomodorosdata.date = "11-29";
+		pomodorosdata.mydate = "11-29";
 		pomodorosdata.mydata = 16;
 		// 插入数据
 		db.execSQL("INSERT INTO mytable VALUES (NULL, ?, ?)", new Object[] {
-				pomodorosdata.date, pomodorosdata.mydata });
+				pomodorosdata.mydate, pomodorosdata.mydata });
 		db.close();
+		
+		Bundle bunde = this.getIntent().getExtras();
+		mydate_main = bunde.getInt("mydate");
 
 		XYMultipleSeriesRenderer renderer = getBarDemoRenderer();
 		setChartSettings(renderer);
@@ -96,7 +99,7 @@ public class History extends Activity {
 		}
 
 		for (Object key1 : map.keySet()) {
-			series.add((String) key1, 3);
+			series.add((String) key1, mydate_main);
 		}
 		dataset.addSeries(series.toXYSeries());
 		return dataset;

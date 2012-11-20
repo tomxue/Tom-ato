@@ -18,7 +18,7 @@ public class TomPomodoros extends Activity {
 	protected static final int NEXT = 0x10001;
 
 	private int iCount = 0;
-	private int TotalLength = 1500; // 60*25=1500
+	private int TotalLength = 15; // 60*25=1500
 	
 	private int tomatoCount = 0;
 
@@ -61,6 +61,11 @@ public class TomPomodoros extends Activity {
 				// Switch to report page
 				Intent intent = new Intent();
 				intent.setClass(TomPomodoros.this, History.class);
+				
+				Bundle bundle = new Bundle();
+				bundle.putInt("mydate", tomatoCount);
+				intent.putExtras(bundle);
+				
 				startActivity(intent);
 			}
 		});
