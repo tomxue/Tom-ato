@@ -52,6 +52,17 @@ public class History extends Activity {
 			System.out.println(key_tmp.toString());
 			count++;  
 		}
+		
+		// show the last 7 data/bars
+		if(count < 7){
+			renderer.setXAxisMin(0.5);
+			renderer.setXAxisMax(7.5);
+		}
+		else
+		{			
+			renderer.setXAxisMin(count-7+0.5);
+			renderer.setXAxisMax(count-7+7.5);	
+		}
 
 		View chart = ChartFactory.getBarChartView(this, getBarDataset2,
 				renderer, Type.DEFAULT);
@@ -121,18 +132,16 @@ public class History extends Activity {
 		renderer.setYTitle("番茄数");
 		renderer.setYAxisMin(0);
 		renderer.setYAxisMax(31);
+		// set it by default
 		renderer.setXAxisMin(0.5);
 		renderer.setXAxisMax(7.5);
-		renderer.setShowLegend(false);
+		
+		renderer.setShowLegend(true);
 		renderer.setShowLabels(true);
-		renderer.setShowGrid(true);
 		renderer.setXLabels(1);
-		// renderer.setDisplayChartValues(true);
 		renderer.setBackgroundColor(Color.WHITE);
 		// 设置页边空白的颜色
 		renderer.setMarginsColor(Color.GRAY);
-		// 设置是否显示,坐标轴的轴,默认为 true
-		renderer.setShowAxes(true);
 		// 设置x,y轴显示的排列
 		renderer.setXLabelsAlign(Align.CENTER);
 		renderer.setYLabelsAlign(Align.RIGHT);
@@ -146,6 +155,7 @@ public class History extends Activity {
 		renderer.setShowAxes(true);
 		// 设置条形图之间的距离
 		renderer.setBarSpacing(2.5);
+		
 		int length = renderer.getSeriesRendererCount();
 
 		for (int i = 0; i < length; i++) {
