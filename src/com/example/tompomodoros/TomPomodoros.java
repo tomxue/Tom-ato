@@ -5,8 +5,10 @@ import java.util.Timer;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.view.Menu;
 import android.view.View;
@@ -23,15 +25,19 @@ public class TomPomodoros extends Activity {
 	private int iCount = 0;
 	private int TotalLength = 4; // 60*25=1500
 	private int tomatoCount = 0;
+	// if not click 'Start' button, then use it
 	private static String mydate_key = "0-0";
-	
+	private final String DBNAME = "tompomo.db";
+	private static SQLiteDatabase db;
 	Timer timer_tmp;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);		
-		
+		setContentView(R.layout.activity_main);
+
+		dbHandler(); // initialization with mydate_key = "0-0";
+
 		button_start = (Button) findViewById(R.id.button1);
 		button_cancel = (Button) findViewById(R.id.button2);
 		button_history = (Button) findViewById(R.id.button3);
@@ -92,8 +98,53 @@ public class TomPomodoros extends Activity {
 				timer_tmp.cancel();
 				progressbar.setProgress(0);
 				iCount = 0;
+
+				dbHandler();
 			}
 		}
+	}
+
+	private void dbHandler() {
+		// 打开或创建tompomodoros.db数据库
+		db = openOrCreateDatabase(DBNAME, Context.MODE_PRIVATE, null);
+		// 创建mytable表
+		db.execSQL("CREATE TABLE if not exists mytable (_id INTEGER PRIMARY KEY AUTOINCREMENT, mydate VARCHAR, mydata SMALLINT)");
+		// ContentValues以键值对的形式存放数据, make the table not empty, by Tom Xue
+		ContentValues cv;
+
+		int mydata_dbitem = 0;
+		boolean dbitem_exist = false;
+		Cursor c = db.rawQuery("SELECT _id, mydate, mydata FROM mytable",
+				new String[] {});
+		while (c.moveToNext()) {
+			String mydate_item = c.getString(c.getColumnIndex("mydate"));
+			if (mydate_item.equals(mydate_key)) {
+				mydata_dbitem = c.getInt(c.getColumnIndex("mydata"));
+				// 删除数据
+				db.delete("mytable", "mydate = ?", new String[] { mydate_key });
+				cv = new ContentValues();
+				cv.put("mydate", mydate_key);
+				cv.put("mydata", 1 + mydata_dbitem);
+				System.out.println("c.getCount()=");
+				System.out.println(c.getCount());
+				// 插入ContentValues中的数据
+				db.insert("mytable", null, cv);
+				dbitem_exist = true;
+			}
+		}
+		c.close();
+
+		if (dbitem_exist == false) {
+			// ContentValues以键值对的形式存放数据
+			cv = new ContentValues();
+			cv.put("mydate", mydate_key);
+			cv.put("mydata", 1);
+			// System.out.println("mydata_user=");
+			// 插入ContentValues中的数据
+			db.insert("mytable", null, cv);
+		}
+
+		db.close();
 	}
 
 	@Override

@@ -28,59 +28,60 @@ import android.view.View;
 public class History extends Activity {
 	private static Map map = new TreeMap<String, Object>();
 	private static int mydata_user;
-	private static String mydate_key;	
+	private static String mydate_key = "0-0";	
 	private static final String TAG = "tomxue";
 	private static SQLiteDatabase db;
+	private final String DBNAME = "tompomo.db";
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		Bundle bundle = this.getIntent().getExtras();
-		mydata_user = bundle.getInt("mydata");
-		mydate_key = bundle.getString("mydate");				
+//		Bundle bundle = this.getIntent().getExtras();
+//		mydata_user = bundle.getInt("mydata");
+//		mydate_key = bundle.getString("mydate");				
         
         // 打开或创建tompomodoros.db数据库
-     	db = openOrCreateDatabase("tompomodoros24.db", Context.MODE_PRIVATE, null);
+     	db = openOrCreateDatabase(DBNAME, Context.MODE_PRIVATE, null);
 //     	db.execSQL("DROP TABLE IF EXISTS mytable");	// 清除表格? to be fixed...
      	// 创建mytable表
 //     	db.execSQL("CREATE TABLE mytable (_id INTEGER PRIMARY KEY AUTOINCREMENT, mydate VARCHAR, mydata SMALLINT)");
      	db.execSQL("CREATE TABLE if not exists mytable (_id INTEGER PRIMARY KEY AUTOINCREMENT, mydate VARCHAR, mydata SMALLINT)");
      	//ContentValues以键值对的形式存放数据, make the table not empty, by Tom Xue
-        ContentValues cv;
-        
-        int mydata_dbitem = 0;
-        boolean dbitem_exist = false;
-        Cursor c = db.rawQuery("SELECT _id, mydate, mydata FROM mytable", new String[]{});  
-        while (c.moveToNext()) {
-        	String mydate_item = c.getString(c.getColumnIndex("mydate"));              
-            if(mydate_item.equals(mydate_key)){
-            	mydata_dbitem = c.getInt(c.getColumnIndex("mydata")); 
-            	//删除数据  
-                db.delete("mytable", "mydate = ?", new String[]{mydate_key});  
-                cv = new ContentValues();
-                cv.put("mydate", mydate_key);
-                cv.put("mydata", 1+mydata_dbitem);
-                System.out.println("c.getCount()=");
-                System.out.println(c.getCount());
-                //插入ContentValues中的数据  
-                db.insert("mytable", null, cv);
-                dbitem_exist = true;
-       	    }
-        }
-        c.close();  
-        
-        if (dbitem_exist == false){
-	        //ContentValues以键值对的形式存放数据
-	        cv = new ContentValues();
-	        cv.put("mydate", mydate_key); 
-	        cv.put("mydata", mydata_user);
-	        System.out.println("mydata_user=");
-	        System.out.println(mydata_user);
-	        //插入ContentValues中的数据  
-	        db.insert("mytable", null, cv);    
-        }
-        
+//        ContentValues cv;
+//        
+//        int mydata_dbitem = 0;
+//        boolean dbitem_exist = false;
+//        Cursor c = db.rawQuery("SELECT _id, mydate, mydata FROM mytable", new String[]{});  
+//        while (c.moveToNext()) {
+//        	String mydate_item = c.getString(c.getColumnIndex("mydate"));              
+//            if(mydate_item.equals(mydate_key)){
+//            	mydata_dbitem = c.getInt(c.getColumnIndex("mydata")); 
+//            	//删除数据  
+//                db.delete("mytable", "mydate = ?", new String[]{mydate_key});  
+//                cv = new ContentValues();
+//                cv.put("mydate", mydate_key);
+//                cv.put("mydata", 1+mydata_dbitem);
+//                System.out.println("c.getCount()=");
+//                System.out.println(c.getCount());
+//                //插入ContentValues中的数据  
+//                db.insert("mytable", null, cv);
+//                dbitem_exist = true;
+//       	    }
+//        }
+//        c.close();  
+//        
+//        if (dbitem_exist == false){
+//	        //ContentValues以键值对的形式存放数据
+//	        cv = new ContentValues();
+//	        cv.put("mydate", mydate_key); 
+//	        cv.put("mydata", mydata_user);
+//	        System.out.println("mydata_user=");
+//	        System.out.println(mydata_user);
+//	        //插入ContentValues中的数据  
+//	        db.insert("mytable", null, cv);    
+//        }
+     	System.out.println("step 1");
 		XYMultipleSeriesRenderer renderer = getBarDemoRenderer();
 		setChartSettings(renderer);
 		// (1) during it map was filled, by Tom Xue
@@ -100,33 +101,17 @@ public class History extends Activity {
 		
 		db.close();
 		// delete db, comment it out in final code
-		deleteDatabase("tompomodoros17.db");  
+//		deleteDatabase(DBNAME);  
 	}
 
 	private static XYMultipleSeriesDataset getBarDataset(Context cxt) {
 		XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
 		CategorySeries series = new CategorySeries("最近31天");
 
-		map.put(mydate_key, 0.0);	// initialize to zero
+		map.put(mydate_key, 0.0);	// to make the db not empty
 
-		// 这里的list是我取出一个对象列表，自己可以找别的数据代替
-		// List<int[]> list = new ArrayList<int[]>();
-		// list.add(new int[] { 18, 9, 21, 15, 10, 6 }); // data to be shown
-		// if (list != null && list.size() > 0) {
-		// for (int i = 0; i < list.size(); i++) {
-		// if (map.containsKey(mydate_key)) {
-		// map.put(mydate_key, mydata_user); // but the key is unique
-		// }
-		// }
-		// }
-
-//		for (Object key1 : map.keySet()) {
-//			// series.add((String) key1, mydata_user);
-//			series.add(mydate_key, mydata_user);
-//		}
-		
 		Cursor c = db.rawQuery("SELECT _id, mydate, mydata FROM mytable", new String[]{});  
-        while (c.moveToNext()) {  
+        while (c.moveToNext()) {
             int _id = c.getInt(c.getColumnIndex("_id"));  
             String mydate = c.getString(c.getColumnIndex("mydate"));  
             int mydata = c.getInt(c.getColumnIndex("mydata"));  
