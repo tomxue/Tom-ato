@@ -26,7 +26,7 @@ public class TomPomodoros extends Activity {
 	private int TotalLength = 4; // 60*25=1500
 	private int tomatoCount = 0;
 	// if not click 'Start' button, then use it
-	private static String mydate_key = "2012-11-20";
+	private static String mydate_key;
 	private final String DBNAME = "tompomo12.db";
 	private static SQLiteDatabase db;
 	Timer timer_tmp;
@@ -35,8 +35,16 @@ public class TomPomodoros extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		// 初始化mydate_key
+		Calendar c = Calendar.getInstance();
+		int year = c.get(Calendar.YEAR);
+		int month = c.get(Calendar.MONTH) + 1;
+		int day = c.get(Calendar.DAY_OF_MONTH);
+		mydate_key = year + "-" + (month < 10 ? ("0" + month) : month)
+				+ "-" + (day < 10 ? ("0" + day) : day);
 
-		dbHandler(); // initialization with mydate_key = "0-0";
+//		dbHandler(); // initialization with mydate_key = "0-0";
 
 		button_start = (Button) findViewById(R.id.button1);
 		button_cancel = (Button) findViewById(R.id.button2);
@@ -54,8 +62,8 @@ public class TomPomodoros extends Activity {
 
 				Timer timer = new Timer();
 				timer.schedule(new ProgressbarTask(), 0, 1000);
-				timer_tmp = timer;
-
+				timer_tmp = timer;		
+				
 				Calendar c = Calendar.getInstance();
 				int year = c.get(Calendar.YEAR);
 				int month = c.get(Calendar.MONTH) + 1;
@@ -81,10 +89,10 @@ public class TomPomodoros extends Activity {
 				startActivity(intent);
 			}
 		});
-		
+
 		button_clear.setOnClickListener(new Button.OnClickListener() {
 			public void onClick(View v) {
-				deleteDatabase("tompomo12.db");  
+				deleteDatabase("tompomo12.db");
 			}
 		});
 	}
@@ -117,38 +125,28 @@ public class TomPomodoros extends Activity {
 		boolean dbitem_exist = false;
 		Cursor c = db.rawQuery("SELECT _id, mydate, mydata FROM mytable",
 				new String[] {});
-		while (c.moveToNext()) {
+		while (c.moveToNext()) {	// 有则替换
 			String mydate_item = c.getString(c.getColumnIndex("mydate"));
 			if (mydate_item.equals(mydate_key)) {
 				mydata_dbitem = c.getInt(c.getColumnIndex("mydata"));
-				// 删除数据
-				if (mydate_key.equals("2012-11-20")) {
-
-				} else {
-					db.delete("mytable", "mydate = ?",
-							new String[] { mydate_key });
-					cv = new ContentValues();
-					cv.put("mydate", mydate_key);
-					if (mydate_key.equals("2012-11-20"))
-						cv.put("mydata", 0);
-					else
-						cv.put("mydata", 1 + mydata_dbitem);
-					// 插入ContentValues中的数据
-					db.insert("mytable", null, cv);
-				}
+				cv = new ContentValues();
+				
+				cv.put("mydata", 1 + mydata_dbitem);
+				
+				// 更新数据
+				db.update("mytable", cv, "mydate = ?",
+						new String[] { mydate_key });
 				dbitem_exist = true;
 			}
 		}
 		c.close();
 
+		// 无则插入
 		if (dbitem_exist == false) {
 			// ContentValues以键值对的形式存放数据
 			cv = new ContentValues();
 			cv.put("mydate", mydate_key);
-			if (mydate_key.equals("2012-11-20"))
-				cv.put("mydata", 0);
-			else
-				cv.put("mydata", 1);
+			cv.put("mydata", 1);
 			// 插入ContentValues中的数据
 			db.insert("mytable", null, cv);
 		}

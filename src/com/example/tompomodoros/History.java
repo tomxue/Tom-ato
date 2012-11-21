@@ -23,8 +23,6 @@ import android.view.View;
 
 public class History extends Activity {
 	private static Map map = new TreeMap<String, Object>();
-	private static int mydata_user;
-	private static String mydate_key = "2012-11-20";	
 	private static final String TAG = "tomxue";
 	private static SQLiteDatabase db;
 	private final String DBNAME = "tompomo12.db";
