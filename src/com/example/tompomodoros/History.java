@@ -1,5 +1,6 @@
 package com.example.tompomodoros;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -22,7 +23,7 @@ import android.util.Log;
 import android.view.View;
 
 public class History extends Activity {
-	private static Map map = new TreeMap<String, Object>();
+	private static Map map = new TreeMap<String, Object>();  // TreeMap是有序的，充分利用之，by Tom Xue
 	private static final String TAG = "tomxue";
 	private static SQLiteDatabase db;
 	private final String DBNAME = "tompomo12.db";
@@ -47,6 +48,8 @@ public class History extends Activity {
 		// (2) then map is further rendered, by Tom Xue
 		for (Object key_tmp : map.keySet()) {
 			renderer.addXTextLabel(count, key_tmp.toString());
+			System.out.println("------map-------");
+			System.out.println(key_tmp.toString());
 			count++;  
 		}
 
@@ -71,14 +74,27 @@ public class History extends Activity {
             String mydate = c.getString(c.getColumnIndex("mydate"));  
             int mydata = c.getInt(c.getColumnIndex("mydata"));  
             map.put(mydate, mydata);
-            series.add(mydate, mydata);
+//            series.add(mydate, mydata);
             Log.v(TAG, "while loop times");
             System.out.println(_id);
             System.out.println(mydate);
             System.out.println(mydata);
             System.out.println("---------------------");
         }  
-        c.close();  		
+        c.close();  	
+        
+        // map -> series, 有序化显示数据
+        Iterator it = map.entrySet().iterator();
+        double value_tmp;
+        String key_tmp;
+        while (it.hasNext()) {
+        	              Map.Entry e = (Map.Entry) it.next();
+        	              System.out.println("Key: " + e.getKey() + "; Value: "
+        	                      + e.getValue());
+        	              key_tmp = (String)e.getKey();
+        	              value_tmp = Integer.parseInt((e.getValue().toString()));
+        	              series.add(key_tmp,value_tmp);
+        }
 		
 		dataset.addSeries(series.toXYSeries());
 		return dataset;
