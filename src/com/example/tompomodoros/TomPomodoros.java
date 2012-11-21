@@ -23,9 +23,7 @@ public class TomPomodoros extends Activity {
 	protected static final int NEXT = 0x10001;
 
 	private int iCount = 0;
-	private int TotalLength = 4; // 60*25=1500
-	private int tomatoCount = 0;
-	// if not click 'Start' button, then use it
+	private int TotalLength = 4; // 60*25=1500，25分钟/番茄
 	private static String mydate_key;
 	private final String DBNAME = "tompomo12.db";
 	private static SQLiteDatabase db;
@@ -43,8 +41,6 @@ public class TomPomodoros extends Activity {
 		int day = c.get(Calendar.DAY_OF_MONTH);
 		mydate_key = year + "-" + (month < 10 ? ("0" + month) : month)
 				+ "-" + (day < 10 ? ("0" + day) : day);
-
-//		dbHandler(); // initialization with mydate_key = "0-0";
 
 		button_start = (Button) findViewById(R.id.button1);
 		button_cancel = (Button) findViewById(R.id.button2);
@@ -103,11 +99,11 @@ public class TomPomodoros extends Activity {
 			iCount += 1;
 			progressbar.setProgress(iCount);
 			if (iCount == TotalLength) {
-				tomatoCount = 1;
 				timer_tmp.cancel();
 				progressbar.setProgress(0);
 				iCount = 0;
 
+				// 每结束一个番茄，再操作db
 				dbHandler();
 			}
 		}

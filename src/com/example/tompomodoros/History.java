@@ -84,6 +84,8 @@ public class History extends Activity {
         c.close();  	
         
         // map -> series, 有序化显示数据
+        // 如果用户随意修改手机日期，那么db中的数据就未必是按照日期排列的
+        // 为了按照日期显示结果，利用了有序的TreeMap
         Iterator it = map.entrySet().iterator();
         double value_tmp;
         String key_tmp;
