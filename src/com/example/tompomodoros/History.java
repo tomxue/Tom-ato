@@ -1,8 +1,5 @@
 package com.example.tompomodoros;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -15,7 +12,6 @@ import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -28,18 +24,14 @@ import android.view.View;
 public class History extends Activity {
 	private static Map map = new TreeMap<String, Object>();
 	private static int mydata_user;
-	private static String mydate_key = "0-0";	
+	private static String mydate_key = "2012-11-20";	
 	private static final String TAG = "tomxue";
 	private static SQLiteDatabase db;
-	private final String DBNAME = "tompomo.db";
+	private final String DBNAME = "tompomo12.db";
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-//		Bundle bundle = this.getIntent().getExtras();
-//		mydata_user = bundle.getInt("mydata");
-//		mydate_key = bundle.getString("mydate");				
         
         // 打开或创建tompomodoros.db数据库
      	db = openOrCreateDatabase(DBNAME, Context.MODE_PRIVATE, null);
@@ -47,41 +39,6 @@ public class History extends Activity {
      	// 创建mytable表
 //     	db.execSQL("CREATE TABLE mytable (_id INTEGER PRIMARY KEY AUTOINCREMENT, mydate VARCHAR, mydata SMALLINT)");
      	db.execSQL("CREATE TABLE if not exists mytable (_id INTEGER PRIMARY KEY AUTOINCREMENT, mydate VARCHAR, mydata SMALLINT)");
-     	//ContentValues以键值对的形式存放数据, make the table not empty, by Tom Xue
-//        ContentValues cv;
-//        
-//        int mydata_dbitem = 0;
-//        boolean dbitem_exist = false;
-//        Cursor c = db.rawQuery("SELECT _id, mydate, mydata FROM mytable", new String[]{});  
-//        while (c.moveToNext()) {
-//        	String mydate_item = c.getString(c.getColumnIndex("mydate"));              
-//            if(mydate_item.equals(mydate_key)){
-//            	mydata_dbitem = c.getInt(c.getColumnIndex("mydata")); 
-//            	//删除数据  
-//                db.delete("mytable", "mydate = ?", new String[]{mydate_key});  
-//                cv = new ContentValues();
-//                cv.put("mydate", mydate_key);
-//                cv.put("mydata", 1+mydata_dbitem);
-//                System.out.println("c.getCount()=");
-//                System.out.println(c.getCount());
-//                //插入ContentValues中的数据  
-//                db.insert("mytable", null, cv);
-//                dbitem_exist = true;
-//       	    }
-//        }
-//        c.close();  
-//        
-//        if (dbitem_exist == false){
-//	        //ContentValues以键值对的形式存放数据
-//	        cv = new ContentValues();
-//	        cv.put("mydate", mydate_key); 
-//	        cv.put("mydata", mydata_user);
-//	        System.out.println("mydata_user=");
-//	        System.out.println(mydata_user);
-//	        //插入ContentValues中的数据  
-//	        db.insert("mytable", null, cv);    
-//        }
-     	System.out.println("step 1");
 		XYMultipleSeriesRenderer renderer = getBarDemoRenderer();
 		setChartSettings(renderer);
 		// (1) during it map was filled, by Tom Xue
@@ -108,7 +65,7 @@ public class History extends Activity {
 		XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
 		CategorySeries series = new CategorySeries("最近31天");
 
-		map.put(mydate_key, 0.0);	// to make the db not empty
+//		map.put(mydate_key, 0.0);	// to make the db not empty
 
 		Cursor c = db.rawQuery("SELECT _id, mydate, mydata FROM mytable", new String[]{});  
         while (c.moveToNext()) {
@@ -118,6 +75,10 @@ public class History extends Activity {
             map.put(mydate, mydata);
             series.add(mydate, mydata);
             Log.v(TAG, "while loop times");
+            System.out.println(_id);
+            System.out.println(mydate);
+            System.out.println(mydata);
+            System.out.println("---------------------");
         }  
         c.close();  		
 		

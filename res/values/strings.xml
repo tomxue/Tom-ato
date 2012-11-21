@@ -8,5 +8,6 @@
     <string name="Button_Cancel">Cancel</string>
     <string name="Button_History">History</string>
     <string name="history_title">HistorySummary</string>
+    <string name="Button_Clear">Clear db</string>
 
 </resources>

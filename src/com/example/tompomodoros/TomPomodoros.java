@@ -17,7 +17,7 @@ import android.widget.ProgressBar;
 
 public class TomPomodoros extends Activity {
 	private ProgressBar progressbar;
-	private Button button_start, button_cancel, button_history;
+	private Button button_start, button_cancel, button_history, button_clear;
 
 	protected static final int STOP = 0x10000;
 	protected static final int NEXT = 0x10001;
@@ -26,8 +26,8 @@ public class TomPomodoros extends Activity {
 	private int TotalLength = 4; // 60*25=1500
 	private int tomatoCount = 0;
 	// if not click 'Start' button, then use it
-	private static String mydate_key = "0-0";
-	private final String DBNAME = "tompomo.db";
+	private static String mydate_key = "2012-11-20";
+	private final String DBNAME = "tompomo12.db";
 	private static SQLiteDatabase db;
 	Timer timer_tmp;
 
@@ -41,6 +41,7 @@ public class TomPomodoros extends Activity {
 		button_start = (Button) findViewById(R.id.button1);
 		button_cancel = (Button) findViewById(R.id.button2);
 		button_history = (Button) findViewById(R.id.button3);
+		button_clear = (Button) findViewById(R.id.button4);
 		progressbar = (ProgressBar) findViewById(R.id.progressBar1);
 		progressbar.setIndeterminate(false);
 
@@ -77,13 +78,13 @@ public class TomPomodoros extends Activity {
 				// Switch to report page
 				Intent intent = new Intent();
 				intent.setClass(TomPomodoros.this, History.class);
-
-				Bundle bundle = new Bundle();
-				bundle.putInt("mydata", tomatoCount);
-				bundle.putString("mydate", mydate_key);
-				intent.putExtras(bundle);
-
 				startActivity(intent);
+			}
+		});
+		
+		button_clear.setOnClickListener(new Button.OnClickListener() {
+			public void onClick(View v) {
+				deleteDatabase("tompomo12.db");  
 			}
 		});
 	}
@@ -121,14 +122,20 @@ public class TomPomodoros extends Activity {
 			if (mydate_item.equals(mydate_key)) {
 				mydata_dbitem = c.getInt(c.getColumnIndex("mydata"));
 				// 删除数据
-				db.delete("mytable", "mydate = ?", new String[] { mydate_key });
-				cv = new ContentValues();
-				cv.put("mydate", mydate_key);
-				cv.put("mydata", 1 + mydata_dbitem);
-				System.out.println("c.getCount()=");
-				System.out.println(c.getCount());
-				// 插入ContentValues中的数据
-				db.insert("mytable", null, cv);
+				if (mydate_key.equals("2012-11-20")) {
+
+				} else {
+					db.delete("mytable", "mydate = ?",
+							new String[] { mydate_key });
+					cv = new ContentValues();
+					cv.put("mydate", mydate_key);
+					if (mydate_key.equals("2012-11-20"))
+						cv.put("mydata", 0);
+					else
+						cv.put("mydata", 1 + mydata_dbitem);
+					// 插入ContentValues中的数据
+					db.insert("mytable", null, cv);
+				}
 				dbitem_exist = true;
 			}
 		}
@@ -138,8 +145,10 @@ public class TomPomodoros extends Activity {
 			// ContentValues以键值对的形式存放数据
 			cv = new ContentValues();
 			cv.put("mydate", mydate_key);
-			cv.put("mydata", 1);
-			// System.out.println("mydata_user=");
+			if (mydate_key.equals("2012-11-20"))
+				cv.put("mydata", 0);
+			else
+				cv.put("mydata", 1);
 			// 插入ContentValues中的数据
 			db.insert("mytable", null, cv);
 		}

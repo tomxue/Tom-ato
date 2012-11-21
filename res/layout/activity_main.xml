@@ -48,9 +48,19 @@
         android:id="@+id/button3"
         android:layout_width="90dp"
         android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/button1"
         android:layout_below="@+id/progressBar1"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="42dp"
+        android:layout_marginTop="18dp"
         android:text="@string/Button_History" />
+
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/button3"
+        android:layout_alignBottom="@+id/button3"
+        android:layout_alignRight="@+id/progressBar1"
+        android:layout_marginRight="30dp"
+        android:text="@string/Button_Clear" />
 
 </RelativeLayout>
