@@ -52,7 +52,7 @@ public class History extends Activity {
 			System.out.println(key_tmp.toString());
 			count++;  
 		}
-		
+
 		// show the last 7 data/bars
 		if(count < 7){
 			renderer.setXAxisMin(0.5);
@@ -69,8 +69,6 @@ public class History extends Activity {
 		setContentView(chart);
 		
 		db.close();
-		// delete db, comment it out in final code
-//		deleteDatabase(DBNAME);  
 	}
 
 	private static XYMultipleSeriesDataset getBarDataset(Context cxt) {
@@ -150,11 +148,14 @@ public class History extends Activity {
 		// 显示网格
 		renderer.setShowGrid(true);
 		// 设置x,y轴上的刻度的颜色
-		renderer.setLabelsColor(Color.BLACK);
+		renderer.setLabelsColor(Color.GREEN);
 		// 设置是否显示,坐标轴的轴,默认为 true
 		renderer.setShowAxes(true);
 		// 设置条形图之间的距离
 		renderer.setBarSpacing(2.5);
+		
+		// by it, the x-axis number 0 10 20 30.. can be hiden
+		renderer.setXLabels(RESULT_OK);
 		
 		int length = renderer.getSeriesRendererCount();
 
