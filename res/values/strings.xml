@@ -1,13 +1,12 @@
 <resources>
 
-    <string name="app_name">TomPomodoros</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="app_name">Tom-ato</string>
     <string name="menu_settings">Settings</string>
-    <string name="title_activity_main">TomPomodoros</string>
+    <string name="title_activity_main">Tom-ato</string>
     <string name="Button_Start">Start</string>
     <string name="Button_Cancel">Cancel</string>
     <string name="Button_History">History</string>
-    <string name="history_title">HistorySummary</string>
+    <string name="history_title">Tomato History</string>
     <string name="Button_Clear">Clear db</string>
 
 </resources>

@@ -15,7 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
-public class TomPomodoros extends Activity {
+public class Tomato extends Activity {
 	private ProgressBar progressbar;
 	private Button button_start, button_cancel, button_history, button_clear;
 
@@ -81,7 +81,7 @@ public class TomPomodoros extends Activity {
 			public void onClick(View v) {
 				// Switch to report page
 				Intent intent = new Intent();
-				intent.setClass(TomPomodoros.this, History.class);
+				intent.setClass(Tomato.this, History.class);
 				startActivity(intent);
 			}
 		});

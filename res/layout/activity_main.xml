@@ -12,26 +12,16 @@
         android:layout_marginLeft="44dp"
         android:layout_marginTop="15dp"
         android:text="@string/Button_Start" />
-
-
-
-
-
-
-
-
-
+
     <ProgressBar
         android:id="@+id/progressBar1"
-        style="?android:attr/progressBarStyleHorizontal"
+        style="@style/CustomProgressBarHorizontal"
         android:layout_width="wrap_content"
-        android:layout_height="40dp"
+        android:layout_height="25dp"
         android:layout_below="@+id/button1"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="18dp"
         android:max="100"
-        android:maxHeight="40dip"
-        android:minHeight="40dip"
         android:minWidth="250dip" />
 
     <Button
@@ -52,7 +42,7 @@
         android:layout_below="@+id/progressBar1"
         android:layout_marginTop="18dp"
         android:text="@string/Button_History" />
-
+
     <Button
         android:id="@+id/button4"
         android:layout_width="100dp"
