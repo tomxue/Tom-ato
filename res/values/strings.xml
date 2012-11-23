@@ -8,5 +8,6 @@
     <string name="Button_History">History</string>
     <string name="history_title">Tomato History</string>
     <string name="Button_Clear">Clear db</string>
+    <string name="Button_About">About</string>
 
 </resources>

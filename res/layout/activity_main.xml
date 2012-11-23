@@ -12,7 +12,7 @@
         android:layout_marginLeft="44dp"
         android:layout_marginTop="15dp"
         android:text="@string/Button_Start" />
-
+
     <ProgressBar
         android:id="@+id/progressBar1"
         style="@style/CustomProgressBarHorizontal"
@@ -52,5 +52,14 @@
         android:layout_alignRight="@+id/progressBar1"
         android:layout_marginRight="30dp"
         android:text="@string/Button_Clear" />
+
+    <Button
+        android:id="@+id/button5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/button3"
+        android:layout_marginTop="29dp"
+        android:layout_toRightOf="@+id/button3"
+        android:text="@string/Button_About" />
 
 </RelativeLayout>

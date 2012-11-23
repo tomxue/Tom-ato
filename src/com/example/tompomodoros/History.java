@@ -34,9 +34,6 @@ public class History extends Activity {
         
         // 打开或创建tompomodoros.db数据库
      	db = openOrCreateDatabase(DBNAME, Context.MODE_PRIVATE, null);
-//     	db.execSQL("DROP TABLE IF EXISTS mytable");	// 清除表格? to be fixed...
-     	// 创建mytable表
-//     	db.execSQL("CREATE TABLE mytable (_id INTEGER PRIMARY KEY AUTOINCREMENT, mydate VARCHAR, mydata SMALLINT)");
      	db.execSQL("CREATE TABLE if not exists mytable (_id INTEGER PRIMARY KEY AUTOINCREMENT, mydate VARCHAR, mydata SMALLINT)");
 		XYMultipleSeriesRenderer renderer = getBarDemoRenderer();
 		setChartSettings(renderer);
@@ -75,15 +72,13 @@ public class History extends Activity {
 		XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
 		CategorySeries series = new CategorySeries("最近31天");
 
-//		map.put(mydate_key, 0.0);	// to make the db not empty
-
 		Cursor c = db.rawQuery("SELECT _id, mydate, mydata FROM mytable", new String[]{});  
         while (c.moveToNext()) {
-            int _id = c.getInt(c.getColumnIndex("_id"));  
-            String mydate = c.getString(c.getColumnIndex("mydate"));  
-            int mydata = c.getInt(c.getColumnIndex("mydata"));  
+            int _id = c.getInt(c.getColumnIndex("_id"));
+            String mydate = c.getString(c.getColumnIndex("mydate"));
+            int mydata = c.getInt(c.getColumnIndex("mydata"));
             map.put(mydate, mydata);
-//            series.add(mydate, mydata);
+//          series.add(mydate, mydata);
             Log.v(TAG, "while loop times");
             System.out.println(_id);
             System.out.println(mydate);
