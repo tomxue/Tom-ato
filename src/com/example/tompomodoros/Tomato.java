@@ -17,6 +17,8 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 import android.view.Gravity;
 import android.view.WindowManager;
+import android.os.PowerManager;  
+import android.os.PowerManager.WakeLock;  
 
 public class Tomato extends Activity {
 	private ProgressBar progressbar;
@@ -27,16 +29,22 @@ public class Tomato extends Activity {
 	protected static final int NEXT = 0x10001;
 
 	private int iCount = 0;
-	private int TotalLength = 3; // 60*25=1500，25分钟/番茄
+	private int TotalLength = 120; // 60*25=1500，25分钟/番茄
 	private static String mydate_key;
 	private final String DBNAME = "tompomo12.db";
 	private static SQLiteDatabase db;
 	private static Timer timer1;
+	private static PowerManager.WakeLock mWakeLock;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
+		// screen kept on related
+		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+		mWakeLock = pm.newWakeLock(
+				PowerManager.SCREEN_DIM_WAKE_LOCK, "TomTag");
 
 		// 初始化mydate_key
 		Calendar c = Calendar.getInstance();
@@ -56,8 +64,9 @@ public class Tomato extends Activity {
 
 		button_start.setOnClickListener(new Button.OnClickListener() {
 			public void onClick(View v) {
-				getWindow().addFlags(
-						WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+//				getWindow().addFlags(
+//						WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+				mWakeLock.acquire();
 
 				// 创建一个线程,每秒步长为1增加,到100%时停止
 				progressbar.setVisibility(View.VISIBLE);
@@ -85,9 +94,8 @@ public class Tomato extends Activity {
 				} catch (Exception e) {
 					System.out.println("error = " + e.getMessage());
 				}
-				getWindow()
-						.addFlags(
-								WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON);
+				
+				mWakeLock.release();
 			}
 		});
 
@@ -125,7 +133,7 @@ public class Tomato extends Activity {
 		public void run() {
 			iCount += 1;
 			progressbar.setProgress(iCount);
-			if (iCount == TotalLength) {				
+			if (iCount == TotalLength) {
 				iCount = 0;
 				progressbar.setProgress(0);
 				timer1.cancel();
@@ -133,6 +141,7 @@ public class Tomato extends Activity {
 				// 每结束一个番茄，再操作db
 				dbHandler();
 
+				mWakeLock.release();
 				// below part will cause fatal error
 				// getWindow()
 				// .addFlags(
