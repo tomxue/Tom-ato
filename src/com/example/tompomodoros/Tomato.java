@@ -29,7 +29,7 @@ public class Tomato extends Activity {
 	protected static final int NEXT = 0x10001;
 
 	private int iCount = 0;
-	private int TotalLength = 120; // 60*25=1500£¨25∑÷÷”/∑¨«—
+	private int TotalLength = 3; // 60*25=1500£¨25∑÷÷”/∑¨«—
 	private static String mydate_key;
 	private final String DBNAME = "tompomo12.db";
 	private static SQLiteDatabase db;
@@ -118,7 +118,7 @@ public class Tomato extends Activity {
 			public void onClick(View v) {
 				Toast toast;
 				toast = Toast.makeText(getApplicationContext(),
-						"author: Tom Xue" + "\n" + "tomxue0126@gmail.com"
+						"Author: Tom Xue" + "\n" + "Email: tomxue0126@gmail.com"
 								+ "\n"
 								+ "https://github.com/tomxue/Tom-ato.git",
 						Toast.LENGTH_LONG);
