@@ -140,6 +140,17 @@ public class Tomato extends Activity {
 
 				// 每结束一个番茄，再操作db
 				dbHandler();
+				
+				// play the sound
+				startService(new Intent("com.example.tompomodoros.MUSIC"));
+				
+				// delay 5s
+				try {
+					Thread.sleep(5000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 
 				mWakeLock.release();
 				// below part will cause fatal error

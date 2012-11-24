@@ -15,33 +15,36 @@ public final class R {
         public static final int ic_launcher=0x7f020001;
     }
     public static final class id {
-        public static final int button1=0x7f070000;
-        public static final int button2=0x7f070002;
-        public static final int button3=0x7f070003;
-        public static final int button4=0x7f070004;
-        public static final int button5=0x7f070005;
-        public static final int menu_settings=0x7f070006;
-        public static final int progressBar1=0x7f070001;
+        public static final int button1=0x7f080000;
+        public static final int button2=0x7f080002;
+        public static final int button3=0x7f080003;
+        public static final int button4=0x7f080004;
+        public static final int button5=0x7f080005;
+        public static final int menu_settings=0x7f080006;
+        public static final int progressBar1=0x7f080001;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
     }
     public static final class menu {
-        public static final int activity_main=0x7f060000;
+        public static final int activity_main=0x7f070000;
+    }
+    public static final class raw {
+        public static final int anydo_pop=0x7f040000;
     }
     public static final class string {
-        public static final int Button_About=0x7f040008;
-        public static final int Button_Cancel=0x7f040004;
-        public static final int Button_Clear=0x7f040007;
-        public static final int Button_History=0x7f040005;
-        public static final int Button_Start=0x7f040003;
-        public static final int app_name=0x7f040000;
-        public static final int history_title=0x7f040006;
-        public static final int menu_settings=0x7f040001;
-        public static final int title_activity_main=0x7f040002;
+        public static final int Button_About=0x7f050008;
+        public static final int Button_Cancel=0x7f050004;
+        public static final int Button_Clear=0x7f050007;
+        public static final int Button_History=0x7f050005;
+        public static final int Button_Start=0x7f050003;
+        public static final int app_name=0x7f050000;
+        public static final int history_title=0x7f050006;
+        public static final int menu_settings=0x7f050001;
+        public static final int title_activity_main=0x7f050002;
     }
     public static final class style {
-        public static final int AppTheme=0x7f050000;
-        public static final int CustomProgressBarHorizontal=0x7f050001;
+        public static final int AppTheme=0x7f060000;
+        public static final int CustomProgressBarHorizontal=0x7f060001;
     }
 }
