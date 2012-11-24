@@ -100,7 +100,8 @@ public class Tomato extends Activity {
 					System.out.println("error = " + e.getMessage());
 				}
 
-				mWakeLock.release();
+				if (mWakeLock.isHeld())
+					mWakeLock.release();
 			}
 		});
 
@@ -115,7 +116,19 @@ public class Tomato extends Activity {
 
 		button_clear.setOnClickListener(new Button.OnClickListener() {
 			public void onClick(View v) {
+				try {
+					db.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
 				deleteDatabase("tompomo12.db");
+
+				Toast toast;
+				toast = Toast.makeText(getApplicationContext(),
+						"the db is deleted.", Toast.LENGTH_LONG);
+				toast.setGravity(Gravity.BOTTOM, 0, 0);
+				toast.show();
 			}
 		});
 
@@ -141,7 +154,13 @@ public class Tomato extends Activity {
 			if (iCount == TotalLength) {
 				iCount = 0;
 				progressbar.setProgress(0);
-				timer1.cancel();
+				// in case at the same time button_cancel is pressed
+				// so try..catch.. applied
+				try {
+					timer1.cancel();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 
 				// 每结束一个番茄，再操作db
 				dbHandler();
@@ -159,7 +178,8 @@ public class Tomato extends Activity {
 					e.printStackTrace();
 				}
 
-				mWakeLock.release();
+				if (mWakeLock.isHeld())
+					mWakeLock.release();
 				// below part will cause fatal error
 				// getWindow()
 				// .addFlags(

@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="44dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginTop="15dp"
         android:text="@string/Button_Start" />
 
@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/button1"
         android:layout_alignBottom="@+id/button1"
-        android:layout_marginLeft="24dp"
+        android:layout_marginLeft="10dp"
         android:layout_toRightOf="@+id/button1"
         android:text="@string/Button_Cancel" />
 
@@ -51,7 +51,8 @@
         android:layout_alignBottom="@+id/button3"
         android:layout_alignLeft="@+id/button2"
         android:text="@string/Button_Clear" />
-
+
+
     <Button
         android:id="@+id/button5"
         android:layout_width="80dp"
