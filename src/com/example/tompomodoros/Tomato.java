@@ -5,6 +5,7 @@ import java.util.Timer;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.Service;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -17,8 +18,9 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 import android.view.Gravity;
 import android.view.WindowManager;
-import android.os.PowerManager;  
-import android.os.PowerManager.WakeLock;  
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
+import android.os.Vibrator;
 
 public class Tomato extends Activity {
 	private ProgressBar progressbar;
@@ -35,6 +37,7 @@ public class Tomato extends Activity {
 	private static SQLiteDatabase db;
 	private static Timer timer1;
 	private static PowerManager.WakeLock mWakeLock;
+	private static Vibrator vt;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -43,8 +46,10 @@ public class Tomato extends Activity {
 
 		// screen kept on related
 		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-		mWakeLock = pm.newWakeLock(
-				PowerManager.SCREEN_DIM_WAKE_LOCK, "TomTag");
+		mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "TomTag");
+
+		vt = (Vibrator) getApplication().getSystemService(
+				Service.VIBRATOR_SERVICE);
 
 		// 初始化mydate_key
 		Calendar c = Calendar.getInstance();
@@ -64,8 +69,8 @@ public class Tomato extends Activity {
 
 		button_start.setOnClickListener(new Button.OnClickListener() {
 			public void onClick(View v) {
-//				getWindow().addFlags(
-//						WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+				// getWindow().addFlags(
+				// WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 				mWakeLock.acquire();
 
 				// 创建一个线程,每秒步长为1增加,到100%时停止
@@ -94,7 +99,7 @@ public class Tomato extends Activity {
 				} catch (Exception e) {
 					System.out.println("error = " + e.getMessage());
 				}
-				
+
 				mWakeLock.release();
 			}
 		});
@@ -118,8 +123,8 @@ public class Tomato extends Activity {
 			public void onClick(View v) {
 				Toast toast;
 				toast = Toast.makeText(getApplicationContext(),
-						"Author: Tom Xue" + "\n" + "Email: tomxue0126@gmail.com"
-								+ "\n"
+						"Author: Tom Xue" + "\n"
+								+ "Email: tomxue0126@gmail.com" + "\n"
 								+ "https://github.com/tomxue/Tom-ato.git",
 						Toast.LENGTH_LONG);
 				toast.setGravity(Gravity.BOTTOM, 0, 0);
@@ -140,10 +145,12 @@ public class Tomato extends Activity {
 
 				// 每结束一个番茄，再操作db
 				dbHandler();
-				
+
 				// play the sound
 				startService(new Intent("com.example.tompomodoros.MUSIC"));
-				
+				// vibrate
+				vt.vibrate(1000);
+
 				// delay 5s
 				try {
 					Thread.sleep(5000);
