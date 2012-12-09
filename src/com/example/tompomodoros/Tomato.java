@@ -14,30 +14,32 @@ import android.database.sqlite.SQLiteDatabase;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 import android.view.Gravity;
-import android.view.WindowManager;
 import android.os.PowerManager;
-import android.os.PowerManager.WakeLock;
+import android.os.SystemClock;
 import android.os.Vibrator;
+import com.example.tompomo.R;
 
 public class Tomato extends Activity {
 	private ProgressBar progressbar;
 	private Button button_start, button_cancel, button_history, button_clear,
 			button_about;
+	private Chronometer chronometer;
 
 	protected static final int STOP = 0x10000;
 	protected static final int NEXT = 0x10001;
 
 	private int iCount = 0;
-	private int TotalLength = 3; // 60*25=1500，25分钟/番茄
+	private int TotalLength = 10; // 60*25=1500，25分钟/番茄
 	private static String mydate_key;
 	private final String DBNAME = "tompomo12.db";
 	private static SQLiteDatabase db;
 	private static Timer timer1;
 	private static PowerManager.WakeLock mWakeLock;
-	private static Vibrator vt;
+	private static Vibrator vt;	
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -66,6 +68,8 @@ public class Tomato extends Activity {
 		button_about = (Button) findViewById(R.id.button5);
 		progressbar = (ProgressBar) findViewById(R.id.progressBar1);
 		progressbar.setIndeterminate(false);
+		chronometer = (Chronometer) findViewById(R.id.chronometer1);
+		chronometer.setFormat("%s");
 
 		button_start.setOnClickListener(new Button.OnClickListener() {
 			public void onClick(View v) {
@@ -87,6 +91,9 @@ public class Tomato extends Activity {
 				int day = c.get(Calendar.DAY_OF_MONTH);
 				mydate_key = year + "-" + (month < 10 ? ("0" + month) : month)
 						+ "-" + (day < 10 ? ("0" + day) : day);
+				// set chronometer to zero
+				chronometer.setBase(SystemClock.elapsedRealtime());
+				chronometer.start();
 			}
 		});
 
@@ -161,10 +168,12 @@ public class Tomato extends Activity {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				
+				chronometer.stop();
 
 				// 每结束一个番茄，再操作db
 				dbHandler();
-
+				
 				// play the sound
 				startService(new Intent("com.example.tompomodoros.MUSIC"));
 				// vibrate

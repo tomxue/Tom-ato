@@ -65,4 +65,19 @@
         android:layout_above="@+id/progressBar1"
         android:text="@string/Button_About" />
 
+    <AnalogClock
+        android:id="@+id/analogClock1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/button4"
+        android:layout_alignLeft="@+id/button4" />
+
+    <Chronometer
+        android:id="@+id/chronometer1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/analogClock1"
+        android:layout_toRightOf="@+id/button2"
+        android:text="@string/Chronometer_Text" />
+
 </RelativeLayout>

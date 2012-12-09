@@ -21,6 +21,7 @@ import android.graphics.Paint.Align;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import com.example.tompomo.R;
 
 public class History extends Activity {
 	private static Map map = new TreeMap<String, Object>();  // TreeMap是有序的，充分利用之，by Tom Xue

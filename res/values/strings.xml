@@ -9,5 +9,7 @@
     <string name="history_title">Tomato History</string>
     <string name="Button_Clear">Clear db</string>
     <string name="Button_About">About</string>
+    <string name="Chronometer_Text">Chronometer</string>
+    
 
 </resources>
